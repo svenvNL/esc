@@ -1,0 +1,22 @@
+{
+  "name": "esc",
+  "version": "0.0.1",
+  "description": "An Ecmascript compliant compiler",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/svenvNL/esc.git"
+  },
+  "author": "Sven van der Vlist",
+  "bugs": {
+    "url": "https://github.com/svenvNL/esc/issues"
+  },
+  "homepage": "https://github.com/svenvNL/esc#readme",
+  "devDependencies": {
+    "typescript": "^2.8.3"
+  }
+}

@@ -1,0 +1,20 @@
+{
+    "compilerOptions": {
+        "allowJs": false,
+        "allowUnreachableCode": false,
+        "alwaysStrict": true,
+        "forceConsistentCasingInFileNames": true,
+        "noImplicitAny": true,
+        "noImplicitReturns": true,
+        "noImplicitThis": true,
+        "module": "es2015",
+        "noUnusedLocals": true,
+        "outDir": "dist",
+        "removeComments": true,
+        "rootDir": "src",
+        "sourceMap": true,
+        "strict": true,
+        "strictNullChecks": true,
+        "target": "es2017"
+    }
+}
