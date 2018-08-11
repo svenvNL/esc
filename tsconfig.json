@@ -7,7 +7,7 @@
         "noImplicitAny": true,
         "noImplicitReturns": true,
         "noImplicitThis": true,
-        "module": "es2015",
+        "module": "commonjs",
         "noUnusedLocals": true,
         "outDir": "dist",
         "removeComments": true,

@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/svenvNL/esc#readme",
   "devDependencies": {
+    "@types/node": "^10.1.2",
     "typescript": "^2.8.3"
   }
 }
