@@ -1,18 +1,23 @@
-import { Lexer } from './lexer/index';
+import { Lexer } from './lexer';
 // import { Parser } from './parser/index';
 
 const lexer = new Lexer();
 // const parser = new Parser();
 
-const tokens = lexer.tokenize(`const i = 0;
+const tokens = lexer.tokenize(`const a = "tralala";const i = 0;
 function b(param) {
-     return param;
+    i++;
+    return param;
 }`);
 // const ast = parser.transform(tokens);
 
 // process.stdout.write(ast.toString());
-// console.log(tokens);
 
-tokens.forEach(token => {
-    console.log(`${token.type}:${token.value}`);
-});
+process.stdin.read();
+
+// tokens.forEach(token => {
+//     console.log(`[${token.loc.start.line},${token.loc.start.column}] [${token.loc.end.line},${token.loc.end.column}] : ${token.type} - ${token.value}`);
+// });
+
+console.table(tokens)
+console.log(tokens)

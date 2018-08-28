@@ -1,4 +1,4 @@
-import * as Lexer from './lexer/index';
-import * as Parser from './parser/index';
+import * as Lexer from './lexer';
+import * as Parser from './parser';
 
 export default { Lexer, Parser }

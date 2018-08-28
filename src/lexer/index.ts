@@ -1,22 +1,33 @@
-import ILexer from './ILexer';
-import IToken from './IToken';
-import Token from './Token';
-import { TokenType } from './TokenType';
-import Grammar from './Grammar';
+import ILexer from "./ILexer";
+import IToken from "./IToken";
+import Token from "./Token";
+import { TokenType } from "./TokenType";
+import Sign from "./Sign";
 
 export class Lexer implements ILexer {
     private tokens: IToken[] = [];
-    private currentToken: IToken | null;
+    private currentToken: IToken | null = null;
     private currentLine: number = 1;
     private currentColumn: number = 0;
 
-    constructor() {
-        const length = this.tokens.push(new Token(this.currentLine, this.currentColumn));
-        this.currentToken = this.tokens[length - 1];
+    private closeToken() {
+        if (this.currentToken) {
+            this.currentToken.locEnd = {
+                column: this.currentColumn,
+                line: this.currentLine
+            };
+        }
+        this.currentToken = null;
     }
 
-    private closeToken() {
-        this.currentToken = null;
+    private closeAndNewLine() {
+        this.closeToken();
+        this.newLine();
+    }
+
+    private closeAndCreateToken() {
+        this.closeToken();
+        this.createToken();
     }
 
     private createToken() {
@@ -33,36 +44,61 @@ export class Lexer implements ILexer {
         this.currentColumn += 1;
     }
 
-    tokenize(code: string): IToken[] {
-        code.split('').forEach(sign => {
-            if (sign === "\n\r" || sign === "\n") {
-                this.closeToken();
-                this.newLine();
-                return;
+    public tokenize(code: string): IToken[] {
+        code.split("").forEach(sign => {
+            const signObj = new Sign(sign);
+
+            if (this.currentToken) {
+                const literal = this.currentToken.literal;
+                if (literal && literal.isOneLineLiteral && signObj.isNewLine() ||
+                    !literal && signObj.isNewLine()) {
+                    return this.closeAndNewLine();
+                }
             }
 
+            if (signObj.isNewLine()) return this.closeAndNewLine();
             this.incrementColumn();
-
-            if (sign === ' ') {
-                this.closeToken();
-                return;
-            }
+            if (signObj.isEmptyValue()) return this.closeToken();
 
             if (!this.currentToken) {
                 const length = this.tokens.push(new Token(this.currentLine, this.currentColumn));
                 this.currentToken = this.tokens[length - 1];
+                this.currentToken.pushSign(new Sign(sign));
+                return;
             }
 
+            const tmpToken = new Token();
+            tmpToken.pushSign(new Sign(sign));
             if (
-                this.currentToken.type === TokenType.Identifier &&
-                Grammar.punctuators.includes(sign)
+                this.currentToken.type !== TokenType.Punctuator && tmpToken.type === TokenType.Punctuator ||
+                this.currentToken.type === TokenType.Punctuator && tmpToken.type !== TokenType.Punctuator
             ) {
+                this.closeAndCreateToken();
+                this.currentToken.pushSign(new Sign(sign));
+                return;
+            }
+
+            const tmpMergeToken = new Token();
+            tmpMergeToken.pushSign(new Sign(this.currentToken.value + tmpToken.value));
+            if (
+                this.currentToken.type === TokenType.Punctuator &&
+                tmpToken.type == TokenType.Punctuator &&
+                tmpMergeToken.type !== TokenType.Punctuator
+            ) {
+                this.closeAndCreateToken();
+                this.currentToken.pushSign(new Sign(sign));
+                return;
+            }
+
+            if (this.currentToken.type === TokenType.Identifier &&
+                signObj.isPunctuator()) {
                 this.createToken();
             }
 
-            this.currentToken.pushChar(sign);
+            this.currentToken.pushSign(new Sign(sign));
         });
 
+        this.closeToken();
         return this.tokens;
     }
 }

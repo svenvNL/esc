@@ -1,6 +1,9 @@
 import { TokenType } from './TokenType';
+import Sign from './Sign';
+import ILiteral from './Literal/ILiteral';
 
 export default interface IToken {
+    literal: ILiteral | null;
     type: TokenType,
     value: string,
     range: number[],
@@ -15,5 +18,6 @@ export default interface IToken {
         }
     }
 
-    pushChar(char: string): void;
+    pushSign(sign: Sign): void;
+    locEnd: { line: number, column: number };
 }

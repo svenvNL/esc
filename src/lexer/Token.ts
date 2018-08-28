@@ -1,8 +1,12 @@
 import IToken from './IToken';
 import { TokenType } from './TokenType';
 import Grammar from "./Grammar";
+import ILiteral from './Literal/ILiteral';
+import Sign from './Sign';
+import { LiteralType } from './Literal/LiteralType';
 
 export default class Token implements IToken {
+    public literal: ILiteral | null = null;
     public value: string;
     public range: number[];
     public loc: {
@@ -16,7 +20,7 @@ export default class Token implements IToken {
         }
     }
 
-    constructor(startLine: number, startColumn: number) {
+    constructor(startLine: number = 0, startColumn: number = 0) {
         this.value = "";
         this.range = [0, 0];
         this.loc = {
@@ -31,8 +35,16 @@ export default class Token implements IToken {
         }
     }
 
-    public pushChar(char: string) {
-        this.value += char;
+    public pushSign(sign: Sign) {
+        if(this.value === "") {
+            this.literal = sign.literal;
+        }
+
+        this.value += sign.value;
+    }
+
+    public set locEnd(loc: { line: number, column: number }) {
+        this.loc.end = loc;
     }
 
     public get type(): TokenType {
@@ -47,7 +59,7 @@ export default class Token implements IToken {
         }
 
         // String
-        if (this.value[0] === "\"") {
+        if (this.literal && this.literal.type === LiteralType.String) {
             return TokenType.String;
         }
 
